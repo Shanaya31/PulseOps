@@ -9,14 +9,27 @@ features at block level, evaluates deterministic anomaly rules against
 ground-truth labels, groups related alerts into temporal episodes, and uses
 Gemini only as a final explanation layer for already-computed evidence.
 
-**PulseOps is intentionally a data-engineering-first project.**
+The project is intentionally data-engineering first.
 
 The LLM does not decide whether an event is anomalous. Detection, severity,
 evaluation, episode construction, and evidence selection are deterministic.
 
 ---
 
+## Architecture
+
+![PulseOps Architecture](assets/pulseops_architecture.png)
+
+PulseOps separates streaming ingestion, deterministic behavioral detection,
+evaluation, temporal incident analysis, and LLM-based explanation into distinct
+layers. Kafka and PySpark handle the streaming path, Snowflake provides the
+analytical layer, and Gemini is used only after incident evidence has already
+been selected deterministically.
+
+---
+
 ## Problem
+
 
 Production incident triage often begins with engineers manually searching large
 volumes of logs, correlating events across components, and determining which
