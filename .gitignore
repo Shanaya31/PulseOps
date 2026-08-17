@@ -1,0 +1,47 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+venv/
+.venv/
+.venv-wsl/
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Spark
+.sparkStaging/
+checkpoints/
+checkpoint/
+spark-checkpoint/
+metastore_db/
+derby.log
+
+# Generated RCA outputs
+incident_*.txt
+episode_*_rca.txt
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Large downloaded dataset files
+data/HDFS_v1.zip
+data/HDFS_v1/
+
+# Backup files
+*.bak
