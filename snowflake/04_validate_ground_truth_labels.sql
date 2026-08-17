@@ -1,0 +1,37 @@
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE PULSEOPS_WH;
+USE DATABASE PULSEOPS;
+USE SCHEMA CORE;
+
+-- =========================================================
+-- PulseOps
+-- Ground-truth validation
+-- =========================================================
+
+SELECT COUNT(*) AS TOTAL_LABELLED_BLOCKS
+FROM PULSEOPS.CORE.GROUND_TRUTH_LABELS;
+
+
+-- Class distribution
+SELECT
+    LABEL,
+    COUNT(*) AS BLOCK_COUNT
+FROM PULSEOPS.CORE.GROUND_TRUTH_LABELS
+GROUP BY LABEL
+ORDER BY BLOCK_COUNT DESC;
+
+
+-- Sample labels
+SELECT *
+FROM PULSEOPS.CORE.GROUND_TRUTH_LABELS
+LIMIT 20;
+
+
+-- Check for duplicate labels
+SELECT
+    BLOCK_ID,
+    COUNT(*) AS LABEL_ROWS
+FROM PULSEOPS.CORE.GROUND_TRUTH_LABELS
+GROUP BY BLOCK_ID
+HAVING COUNT(*) > 1
+ORDER BY LABEL_ROWS DESC;

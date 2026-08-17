@@ -1,0 +1,69 @@
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE PULSEOPS_WH;
+USE DATABASE PULSEOPS;
+USE SCHEMA CORE;
+
+-- =========================================================
+-- PulseOps
+-- Raw log event validation
+-- =========================================================
+
+-- Overall row count
+SELECT COUNT(*) AS RAW_ROWS
+FROM PULSEOPS.CORE.RAW_LOG_EVENTS;
+
+
+-- Distinct streamed blocks
+SELECT COUNT(DISTINCT BLOCK_ID) AS UNIQUE_BLOCKS
+FROM PULSEOPS.CORE.RAW_LOG_EVENTS
+WHERE BLOCK_ID IS NOT NULL;
+
+
+-- Log-level distribution
+SELECT
+    LEVEL,
+    COUNT(*) AS EVENT_COUNT
+FROM PULSEOPS.CORE.RAW_LOG_EVENTS
+GROUP BY LEVEL
+ORDER BY EVENT_COUNT DESC;
+
+
+-- Check whether WARN / ERROR strings exist in raw log lines
+SELECT
+    LEVEL,
+    RAW_LINE
+FROM PULSEOPS.CORE.RAW_LOG_EVENTS
+WHERE UPPER(RAW_LINE) LIKE '%ERROR%'
+   OR UPPER(RAW_LINE) LIKE '%WARN%'
+LIMIT 30;
+
+
+-- Component distribution
+SELECT
+    COMPONENT,
+    COUNT(*) AS EVENT_COUNT
+FROM PULSEOPS.CORE.RAW_LOG_EVENTS
+GROUP BY COMPONENT
+ORDER BY EVENT_COUNT DESC
+LIMIT 20;
+
+
+-- Sample parsed events
+SELECT
+    RAW_LINE,
+    LEVEL,
+    COMPONENT,
+    MESSAGE,
+    BLOCK_ID,
+    EVENT_TIME
+FROM PULSEOPS.CORE.RAW_LOG_EVENTS
+WHERE BLOCK_ID IS NOT NULL
+ORDER BY EVENT_TIME
+LIMIT 20;
+
+
+-- Timestamp range represented by current replay
+SELECT
+    MIN(EVENT_TIME) AS FIRST_EVENT,
+    MAX(EVENT_TIME) AS LAST_EVENT
+FROM PULSEOPS.CORE.RAW_LOG_EVENTS;

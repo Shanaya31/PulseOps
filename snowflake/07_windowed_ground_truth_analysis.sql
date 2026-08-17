@@ -1,0 +1,57 @@
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE PULSEOPS_WH;
+USE DATABASE PULSEOPS;
+USE SCHEMA CORE;
+
+-- =========================================================
+-- PulseOps
+-- WINDOWED_METRICS vs ground truth
+-- =========================================================
+
+SELECT
+    g.LABEL,
+
+    COUNT(*) AS WINDOW_COUNT,
+
+    ROUND(
+        AVG(w.EVENT_COUNT),
+        2
+    ) AS AVG_EVENTS_PER_WINDOW,
+
+    MEDIAN(w.EVENT_COUNT)
+        AS MEDIAN_EVENTS_PER_WINDOW,
+
+    MAX(w.EVENT_COUNT)
+        AS MAX_EVENTS_PER_WINDOW,
+
+    ROUND(
+        STDDEV(w.EVENT_COUNT),
+        2
+    ) AS STDDEV_EVENTS
+
+FROM PULSEOPS.CORE.WINDOWED_METRICS w
+
+JOIN PULSEOPS.CORE.GROUND_TRUTH_LABELS g
+    ON w.BLOCK_ID = g.BLOCK_ID
+
+GROUP BY g.LABEL;
+
+
+-- Highest-volume windows and their true label
+SELECT
+    w.BLOCK_ID,
+    g.LABEL,
+    w.WINDOW_START,
+    w.WINDOW_END,
+    w.EVENT_COUNT,
+    w.ERROR_COUNT,
+    w.WARN_COUNT
+
+FROM PULSEOPS.CORE.WINDOWED_METRICS w
+
+JOIN PULSEOPS.CORE.GROUND_TRUTH_LABELS g
+    ON w.BLOCK_ID = g.BLOCK_ID
+
+ORDER BY w.EVENT_COUNT DESC
+
+LIMIT 30;

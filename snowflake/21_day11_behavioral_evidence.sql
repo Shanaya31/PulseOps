@@ -1,0 +1,35 @@
+USE ROLE ACCOUNTADMIN;
+USE WAREHOUSE PULSEOPS_WH;
+USE DATABASE PULSEOPS;
+USE SCHEMA CORE;
+
+-- =====================================================
+-- PulseOps Day 11
+-- Behavioral incident evidence for LLM RCA
+-- =====================================================
+
+CREATE OR REPLACE VIEW INCIDENT_EVIDENCE_BEHAVIORAL AS
+SELECT
+    i.BLOCK_ID,
+    i.SEVERITY,
+    i.DETECTION_REASON,
+
+    d.EVENT_COUNT,
+    d.COMPONENT_COUNT,
+    d.ACTIVE_DURATION_SECONDS,
+    d.EVENTS_PER_SECOND,
+    d.EVENTS_PER_COMPONENT,
+    d.COMPONENT_DIVERSITY,
+
+    r.LEVEL,
+    r.COMPONENT,
+    r.MESSAGE,
+    r.EVENT_TIME
+
+FROM INCIDENTS_BEHAVIORAL i
+
+JOIN BLOCK_BEHAVIOR_DERIVED d
+    ON i.BLOCK_ID = d.BLOCK_ID
+
+JOIN RAW_LOG_EVENTS r
+    ON i.BLOCK_ID = r.BLOCK_ID;
